@@ -27,449 +27,447 @@
 .\"
 .\"     @(#)syslog.conf.5	8.1 (Berkeley) 6/9/93
 .\"
-.Dd December 10, 2020
+.Dd от 10 декабря, 2020 г.
 .Dt SYSLOG.CONF 5
 .Os
-.Sh NAME
+.Sh МЯ
 .Nm syslog.conf
 .Nd
 .Xr syslogd 8
-configuration file
-.Sh DESCRIPTION
-The
+файл конфигурации
+.Sh ОПИСАНИЕ
+Файл
 .Nm
-file is the configuration file for the
+является конфигурационным файлом для
 .Xr syslogd 8
-program.
-It consists of
-blocks of lines separated by
+программы.
+Он состоит из
+блоков строк, разделенных
 .Em program ,
 .Em hostname
-or
-.Em property-based filter
-specifications (separations appear alone on their lines),
-with each line containing two fields: the
+или
+.Em спецификации фильтров, основанные на свойствах
+(разделители отображаются отдельно в их строках),
+причем каждая строка содержит два поля: 
 .Em selector
-field which specifies the types of messages and priorities to which the
-line applies, and an
+поле, в котором указываются типы сообщений и приоритеты, к которым
+применяется строка, и
 .Em action
-field which specifies the action to be taken if a message
+поле, в котором указывается действие, которое необходимо предпринять, если получено сообщение
 .Xr syslogd 8
-receives matches the selection criteria.
-The
+полученные данные соответствуют критериям отбора.
+Поле
 .Em selector
-field is separated from the
+отделено от поля
 .Em action
-field by one or more tab characters or spaces.
+одним или несколькими символами табуляции или пробелами.
 .Pp
-A special
+специальное ключевое слово
 .Em include
-keyword can be used to include all files with names ending in '.conf' and not
-beginning with a '.' contained in the directory following the keyword.
-This keyword can only be used in the first level configuration file.
+keyword может использоваться для включения всех файлов с именами, оканчивающимися на '.conf' и не
+начинающиеся с'.' содержится в каталоге, следующем за ключевым словом.
+Это ключевое слово можно использовать только в файле конфигурации первого уровня.
 .Pp
-Note that if you use spaces as separators, your
+Обратите внимание, что если вы используете пробелы в качестве разделителей, то ваш
 .Nm
-might be incompatible with other Unices or Unix-like systems.
-This functionality was added for ease of configuration
-(e.g.,\& it is possible to cut-and-paste into
+может быть несовместим с другими Unice или Unix-подобными системами.
+Эта функциональность была добавлена для упрощения настройки
+(e.g.,\& можно вырезать и вставить в
 .Nm ) ,
-and to avoid possible mistakes.
-This change however preserves
-backwards compatibility with the old style of
+и чтобы избежать возможных ошибок.
+Однако это изменение сохраняет
+обратную совместимость со старым стилем
 .Nm
 (i.e., tab characters only).
 .Pp
-The
+Параметры
 .Em selectors
-are encoded as a
+кодируются как
 .Em facility ,
-a period
+периудом
 .Pq Dq \&. ,
-an optional set of comparison flags
+дополнительный набор флагов сравнения
 .Pq Oo \&! Oc Op <=> ,
-and a
+и как 
 .Em level ,
-with no intervening white-space.
-Both the
+без промежуточных пробелов.
+Оба параметра
 .Em facility
-and the
+и параметры
 .Em level
-are case insensitive.
+не чувствительны к регистру.
 .Pp
-The
+Параметр
 .Em facility
-describes the part of the system generating the message, and is one of
-the following keywords:
+описывает часть системы, генерирующую сообщение, и является одним из
+следующих ключевых слов:
 .Cm auth , authpriv , console , cron , daemon , ftp , kern , lpr ,
 .Cm mail , mark , news , ntp , security , syslog , user , uucp ,
-and
+и
 .Cm local0
-through
+через
 .Cm local7 .
-These keywords (with the exception of mark) correspond to
-similar
+Эти ключевые слова (за исключением знака) соответствуют
+аналогичным
 .Dq Dv LOG_
-values specified to the
+значения, указанные для
 .Xr openlog 3
-and
+и
 .Xr syslog 3
-library routines.
+библиотечных процедур.
 .Pp
-The
-.Em comparison flags
-may be used to specify exactly what is logged.
-The default comparison is
+
+.Em сравнительные флаги
+может использоваться для точного указания того, что регистрируется в журнале.
+По умолчанию используется сравнение
 .Dq =>
-(or, if you prefer,
+(или, если вы больше предпочитаете,
 .Dq >= ) ,
-which means that messages from the specified
+это означает, что сообщения от указанного параметра
 .Em facility
-list, and of a priority
-level equal to or greater than
+список и
+с уровнем приоритета, равным или превышающим
 .Em level
-will be logged.
-Comparison flags beginning with
+будет занесен в журнал.
+Флаги сравнения, начинающиеся с
 .Dq Li \&!
-will have their logical sense inverted.
-Thus
+будет перевернут их логический смысл.
+Таким образом
 .Dq !=info
-means all levels except info and
+означает все уровни, кроме информационного и
 .Dq !notice
-has the same meaning as
+и им еют одно значение
 .Dq <notice .
 .Pp
-The
+Параметр
 .Em level
-describes the severity of the message, and is a keyword from the
-following ordered list (higher to lower):
+описывает серьезность сообщения и является ключевым словом из
+следующего упорядоченного списка (от верхнего к нижнему):
 .Cm emerg , alert , crit , err , warning , notice , info
-and
+и
 .Cm debug .
-These keywords correspond to
-similar
+Эти ключевые слова соответствуют
+похожим
 .Dq Dv LOG_
-values specified to the
+значения, указанные для
 .Xr syslog 3
-library routine.
+библиотечных процедур.
 .Pp
-Each block of lines is separated from the previous block by a
+Каждый блок строк отделен от предыдущего блока символом
 .Em program ,
 .Em hostname
-or
+или
 .Em property-based filter
 specification.
-A block will only log messages corresponding to the most recent
+Блок будет регистрировать только сообщения, соответствующие самым последним
 .Em program ,
 .Em hostname
-and
+и
 .Em property-based filter
-specifications given.
-Thus, with a block which selects
+даны спецификации.
+Таким образом, с помощью блока, который выбирает
 .Ql ppp
-as the
+в качестве
 .Em program ,
-directly followed by a block that selects messages from the
+непосредственно за ним следует блок, который выбирает сообщения из
 .Em hostname
 .Ql dialhost ,
-the second block will only log messages
-from the
+второй блок будет регистрировать только сообщения
+от
 .Xr ppp 8
 program on dialhost.
 .Pp
 A
 .Em program
-specification is a line beginning with
+спецификация - это строка, начинающаяся с
 .Ql #!prog
 or
 .Ql !prog
-(the former is for compatibility with the previous syslogd, if one is sharing
+(первый предназначен для совместимости с предыдущим syslogd, если кто-то использует общий доступ
 .Nm
-files, for example)
-and the following blocks will be associated with calls to
+к файлам, например)
+и следующие блоки будут связаны с вызовами
 .Xr syslog 3
-from that specific program.
+из этой конкретной программы
 A
 .Em program
-specification for
+спецификация для
 .Ql foo
-will also match any message logged by the kernel with the prefix
+также будет соответствовать любому сообщению, зарегистрированному ядром с префиксом
 .Ql "foo: " .
-The
+
 .Ql #!+prog
-or
+или
 .Ql !+prog
-specification works just like the previous one,
-and the
+спецификация работает точно так же, как и предыдущая,
+и
 .Ql #!-prog
-or
+или
 .Ql !-prog
-specification will match any message but the ones from that
-program.
-Multiple programs may be listed, separated by commas:
+спецификация будет соответствовать любому сообщению, кроме сообщений от этой
+программы.
+Может быть указано несколько программ, разделенных запятыми:
 .Ql !prog1,prog2
-matches messages from either program, while
+сопоставляет сообщения из любой программы, в то время как
 .Ql !-prog1,prog2
-matches all messages but those from
+соответствует всем сообщениям, кроме сообщений от
 .Ql prog1
 or
 .Ql prog2 .
 .Pp
 A
 .Em hostname
-specification of the form
+спецификации формы
 .Ql #+hostname
-or
+или
 .Ql +hostname
-means the following blocks will be applied to messages
-received from the specified hostname.
-Alternatively, the
+означает, что к сообщениям
+, полученным с указанного имени хоста, будут применены следующие блокировки.
+В качестве альтернативы,
 .Em hostname
-specification
+спецификация
 .Ql #-hostname
-or
+или
 .Ql -hostname
-causes the following blocks to be applied to messages
-from any host but the one specified.
-If the hostname is given as
+приводит к применению следующих блоков к сообщениям
+с любого хоста, кроме указанного.
+Если имя хоста указано как
 .Ql @ ,
-the local hostname will be used.
-As for program specifications, multiple comma-separated
-values may be specified for hostname specifications.
+будет использоваться локальное имя хоста.
+Что касается спецификаций программы,
+то для спецификаций имени хоста может быть указано несколько значений, разделенных запятыми.
 .Pp
-A
+Спецификация
 .Em property-based filter
-specification is a line beginning with
+это строка, начинающаяся с
 .Ql #:
-or
+или
 .Ql \&:
-and the following blocks will be applied only when filter value
-matches given filter propertie's value.
-See
+и следующие блоки будут применены только тогда, когда значение фильтра
+будет соответствовать значению данного свойства фильтра.
+См. раздел
 .Sx PROPERTY-BASED FILTERS
-section for more details.
+для большей информации.
 .Pp
 A
 .Em program ,
 .Em hostname
-or
+либо
 .Em property-based filter
-specification may be reset by giving
+спецификация может быть изменена путем указания
 .Ql *
-as an argument.
+в качестве параметра.
 .Pp
-See
+См.
 .Xr syslog 3
-for further descriptions of both the
+для дальнейшего описания обоих
 .Em facility
-and
+и
 .Em level
-keywords and their significance.
-It is preferred that selections be made on
+ключевые слова и их значимость.
+Предпочтительно, чтобы выбор был сделан на
 .Em facility
-rather than
+скорее чем на
 .Em program ,
-since the latter can easily vary in a networked environment.
-In some cases,
-though, an appropriate
+поскольку последние могут легко изменяться в сетевой среде.
+Однако в некоторых случаях соответствующий
 .Em facility
-simply does not exist.
+просто напросто не существует.
 .Pp
-If a received message matches the specified
+Если полученное сообщение соответствует указанному
 .Em facility
-and is of the specified
+и имеет указанный
 .Em level
 .Em (or a higher level) ,
-and the first word in the message after the date matches the
+и первое слово в сообщении после даты соответствует
 .Em program ,
-the action specified in the
+действие, указанное в
 .Em action
-field will be taken.
+поле будет использовано.
 .Pp
-Multiple
+Множество
 .Em selectors
-may be specified for a single
+может быть задан для одного
 .Em action
-by separating them with semicolon
+разделяя их точкой с запятой
 .Pq Dq \&;
-characters.
-It is important to note, however, that each
+символами.
+Однако важно отметить, что каждый
 .Em selector
-can modify the ones preceding it.
+может изменять те, что предшествовали ему.
 .Pp
-Multiple
+Множество
 .Em facilities
-may be specified for a single
+может быть задан для одного
 .Em level
-by separating them with comma
+разделяя их точкой 
 .Pq Dq \&,
-characters.
+символами.
 .Pp
-An asterisk
+Звездочка
 .Pq Dq *
-can be used to specify all
+может использоваться для указания всех
 .Em facilities ,
-all
+всех
 .Em levels ,
-or all
+либо всех
 .Em programs .
 .Pp
-The special
+Специальный
 .Em facility
 .Dq mark
-receives a message at priority
+получает сообщение с приоритетом
 .Dq info
-every 20 minutes
-(see
+каждые 20 минут
+(см.
 .Xr syslogd 8 ) .
-This is not enabled by a
+Это не включается с помощью
 .Em facility
-field containing an asterisk.
+поле, отмеченное звездочкой.
 .Pp
-The special
+Специальный
 .Em level
 .Dq none
-disables a particular
+отключает определенный
 .Em facility .
 .Pp
-The
+Поле
 .Em action
-field of each line specifies the action to be taken when the
+поле каждой строки указывает действие, которое должно быть предпринято, когда
 .Em selector
-field selects a message.
-There are five forms:
+в поле выбирается сообщение.
+Существует пять форм:
 .Bl -bullet
 .It
-A pathname (beginning with a leading slash).
-Selected messages are appended to the file.
+в поле выбирается сообщение.
+Существует пять форм.Путь к файлу (начинается с косой черты).
+Выбранные сообщения будут добавлены в файл.
 .Pp
-To ensure that kernel messages are written to disk promptly,
+Для обеспечения оперативной записи сообщений ядра на диск,
 .Nm
-calls
+вызывает
 .Xr fsync 2
-after writing messages from the kernel.
-Other messages are not synced explicitly.
-You may prefix a pathname with the minus sign,
+после записи сообщений из ядра.
+Другие сообщения явно не синхронизируются.
+Вы можете добавить к имени пути знак минус,
 .Dq - ,
-to forego syncing the specified file after every kernel message.
-Note that you might lose information if the system crashes
-immediately following a write attempt.
-Nevertheless, using the
+чтобы отказаться от синхронизации указанного файла после каждого сообщения ядра.
+Обратите внимание, что вы можете потерять информацию, если система выйдет из строя
+сразу после попытки записи.
+Тем не менее, использование
 .Dq -
-option may improve performance,
-especially if the kernel is logging many messages.
+эта опция может повысить производительность,
+особенно если ядро регистрирует много сообщений.
 .It
-A hostname (preceded by an at
+Имя хоста (которому предшествует 
 .Pq Dq @
-sign).
-Selected messages are forwarded to the
+знак).
+Выбранные сообщения пересылаются на
 .Xr syslogd 8
-program on the named host.
-If a port number is added after a colon
+программа на указанном хосте.
+Если после двоеточия добавляется номер порта
 .Pq Ql :\&
-then that port will be used as the destination port
-rather than the usual syslog port.
-IPv6 addresses can be used
-by surrounding the address portion with
-square brackets
+тогда этот порт будет использоваться в качестве порта назначения, 
+а не как обычный порт системного журнала.
+Можно использовать адреса IPv6, 
+заключив часть адреса в
+квадратные скобки
 .Po
 .Ql [\&
-and
+и
 .Ql ]\&
 .Pc .
 .It
-A comma separated list of users.
-Selected messages are written to those users
-if they are logged in.
+Список пользователей, разделенных запятыми.
+Выбранные сообщения будут отправлены этим пользователям, 
+если они вошли в систему.
 .It
-An asterisk.
-Selected messages are written to all logged-in users.
+Отмечен звездочкой.
+Выбранные сообщения будут отправлены всем зарегистрированным пользователям.
 .It
-A vertical bar
+Шкала верификации
 .Pq Dq \&| ,
-followed by a command to pipe the selected
-messages to.
-The command is passed to
+затем следует команда для отправки выбранных
+сообщений.
+Команда передается в
 .Xr sh 1
-for evaluation, so usual shell metacharacters or input/output
-redirection can occur.
-(Note however that redirecting
+для оценки могут использоваться обычные метасимволы оболочки или перенаправление ввода/вывода.
+(Однако обратите внимание, что перенаправление
 .Xr stdio 3
-buffered output from the invoked command can cause additional delays,
-or even lost output data in case a logging subprocess exited with a
-signal.)
-The command itself runs with
+буферизованный вывод вызванной команды может привести к дополнительным задержкам
+или даже к потере выходных данных в случае, если подпроцесс ведения журнала завершился с
+сигналом.)
+Сама команда выполняется с
 .Em stdout
-and
+и
 .Em stderr
-redirected to
+перенаправлен на
 .Pa /dev/null .
-Upon receipt of a
+После получения
 .Dv SIGHUP ,
 .Xr syslogd 8
-will close the pipe to the process.
-If the process did not exit
-voluntarily, it will be sent a
+закроет канал связи с процессом.
+Если процесс не завершился
+добровольно, ему будет отправлено сообщение
 .Dv SIGTERM
-signal after a grace period of up to 60 seconds.
+подайте сигнал после льготного периода продолжительностью до 60 секунд.
 .Pp
-The command will only be started once data arrives that should be piped
-to it.
-If it exited later, it will be restarted as necessary.
-So if it
-is desired that the subprocess should get exactly one line of input only
-(which can be very resource-consuming if there are a lot of messages
-flowing quickly), this can be achieved by exiting after just one line of
-input.
-If necessary, a script wrapper can be written to this effect.
+Команда будет запущена только после поступления данных, которые должны быть переданы
+в нее по конвейеру.
+Если она завершилась позже, она будет перезапущена по мере необходимости.
+Таким образом, если желательно, 
+чтобы подпроцесс получал только одну строку ввода
+(что может быть очень ресурсоемким, если
+быстро поступает много сообщений), этого можно достичь, завершив работу только после одной строки
+ввода.
+При необходимости для этого может быть написана оболочка скрипта.
 .Pp
-Unless the command is a full pipeline, it is probably useful to
-start the command with
+Если команда не является полноценным конвейером, вероятно, полезно
+запустить ее с помощью
 .Em exec
-so that the invoking shell process does not wait for the command to
-complete.
-Warning: the process is started under the UID invoking
+чтобы вызывающий процесс оболочки не ждал завершения выполнения команды.
+Внимание: процесс запускается под UID вызывающего процесса.
 .Xr syslogd 8 ,
-normally the superuser.
+обычно это суперпользователь.
 .El
 .Pp
-Blank lines and lines whose first non-blank character is a hash
+Пустые строки и строки, первый непустой символ которых является хэшем
 .Pq Dq #
-character are ignored.
-If
+буквы игнорируются.
+Если
 .Ql #
-is placed in the middle of the line, the
+помещается в середину строки, то
 .Ql #
-character and the rest of the line after it is ignored.
-To prevent special meaning, the
+символ и остальная часть строки после него игнорируются.
+Чтобы избежать придания особого значения, символ
 .Ql #
-character may be escaped with
+символ может быть экранирован с помощью
 .Ql \e ;
-in this case preceding
+в этом случае предшествующий
 .Ql \e
-is removed and
+удаляется и
 .Ql #
-is treated as an ordinary character.
-.Sh PROPERTY-BASED FILTERS
+воспринимается как обычный символ.
+.Sh ФИЛЬТРЫ, ОСНОВАННЫЕ НА СВОЙСТВАХ
 .Em program ,
 .Em hostname
-specifications performs exact match filtering against explicit field only.
-.Em Property-based filters
-feature substring and regular expressions (see
+спецификации выполняют фильтрацию точного соответствия только для явных полей.
+Фильтры на основе свойств .Em
+используйте подстроку и регулярные выражения (см.
 .Xr re_format 7 )
-matching against various message attributes.
-Filter specification starts with
+сопоставление с различными атрибутами сообщения.
+Спецификация фильтра начинается с
 .Ql #:
-or
+или
 .Ql \&:
-followed by three comma-separated fields
+за ними следуют три поля, разделенные запятыми
 .Em property , operator , \&"value\&" .
-Value must be double-quoted.
-A double quote and backslash must be escaped by a backslash.
+Значение должно быть заключено в двойные кавычки.
+Двойные кавычки и обратная косая черта должны быть экранированы обратной косой чертой.
 .Pp
-Following
+Следуя за
 .Em properties
-are supported as test value:
+поддерживаются в качестве тестового значения:
 .Pp
 .Bl -bullet -compact
 .It
@@ -486,10 +484,10 @@ are supported as test value:
 - an alias for hostname
 .El
 .Pp
-Operator specifies a comparison function between
+Оператор определяет функцию сравнения между
 .Em propertie's
  value against filter's value.
-Possible operators:
+Возможные операторы:
 .Pp
 .Bl -bullet -compact
 .It
@@ -511,7 +509,7 @@ Possible operators:
 - true if property matches extended regular expression defined in filter value
 .El
 .Pp
-Operator may be prefixed by
+Оператор может иметь префикс в виде
 .Pp
 .Bl -bullet -compact
 .It
@@ -524,24 +522,24 @@ Operator may be prefixed by
 .Sh IMPLEMENTATION NOTES
 The
 .Dq kern
-facility is usually reserved for messages
-generated by the local kernel.
-Other messages logged with facility
+функция обычно зарезервирована для сообщений, 
+генерируемых локальным ядром.
+Другие сообщения, регистрируемые с помощью функции
 .Dq kern
-are usually translated to facility
+обычно переводятся на язык facility
 .Dq user .
-This translation can be disabled;
-see
+Этот перевод можно отключить;
+см.
 .Xr syslogd 8
-for details.
-.Sh FILES
+для деталей.
+.Sh ФАЙЛЫ
 .Bl -tag -width /etc/syslog.conf -compact
 .It Pa /etc/syslog.conf
 .Xr syslogd 8
-configuration file
+файл конфигурации
 .El
-.Sh EXAMPLES
-A configuration file might appear as follows:
+.Sh ПРИМЕРЫ
+Файл конфигурации может выглядеть следующим образом:
 .Bd -literal
 # Log all kernel messages, authentication messages of
 # level notice or higher, and anything of level err or
@@ -606,28 +604,28 @@ console.*						/var/log/console.log
 :hostname, icase_ereregex, "^server-(dcA|podB|cdn)-rack1[0-9]{2}\\..*"
 *.*							/var/log/racks10..19.log
 .Ed
-.Sh SEE ALSO
+.Sh СМОТРЕТЬ ТАКЖЕ
 .Xr syslog 3 ,
 .Xr syslogd 8
-.Sh BUGS
-The effects of multiple
+.Sh ОШИБКИ
+Последствия множественных
 .Em selectors
-are sometimes not intuitive.
-For example
+иногда они не обладают интуицией.
+Например
 .Dq mail.crit,*.err
-will select
+выберет
 .Dq mail
-facility messages at the level of
+сообщения объекта на уровне
 .Dq err
-or higher, not at the level of
+или выше, а не на уровне
 .Dq crit
-or higher.
+или выше.
 .Pp
-In networked environments, note that not all operating systems
-implement the same set of facilities.
-The facilities
-authpriv, cron, ftp, and ntp that are known to this implementation
-might be absent on the target system.
-Even worse, DEC UNIX uses
-facility number 10 (which is authpriv in this implementation) to
-log events for their AdvFS file system.
+Обратите внимание, что в сетевых средах не все операционные системы
+реализуют одинаковый набор функций.
+Функции
+authpriv, cron, ftp, и ntp, которые известны для данной реализации, 
+могут отсутствовать в целевой системе.
+Что еще хуже, DEC UNIX uses
+средство под номером 10 (которое в данной реализации является authpriv) для
+регистрации событий в своей файловой системе AdvFS.
